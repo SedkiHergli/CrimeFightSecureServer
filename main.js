@@ -8,9 +8,7 @@ const PORT = process.env.PORT || config.port;
 
 const SecurityRouter = require('./security/routes.config');
 const IdentityRouter = require('./identity/routes.config');
-const LocationRouter = require('./locations/routes.config');
-const EmergencyRouter = require('./emergencys/routes.config');
-const SensorRouter = require('./sensors/routes.config');
+
 
 config.initRefreshSecret();
 
@@ -43,9 +41,6 @@ main.use(function (req, res, next) {
 main.use(bodyParser.json());//handler
 SecurityRouter.routesConfig(main);
 IdentityRouter.routesConfig(main);
-LocationRouter.routesConfig(main);
-SensorRouter.routesConfig(main);
-EmergencyRouter.routesConfig(main);
 
 tls.createServer(options, main).listen(PORT, (error) => {
         if (error) {

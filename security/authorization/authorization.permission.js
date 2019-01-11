@@ -34,23 +34,6 @@ exports.onlySameUserOrAdminCanDoThisAction = (req, res, next) => {
 };
 
 
-exports.onlySameUserOrAdminOrSupervisorCanDoThisAction = (req, res, next) => {
-    let user_permission_level = parseInt(req.jwt.roles);
-    let email = req.jwt.email;
-    let email_s = req.jwt.email_s;
-    let email_u = req.jwt.email_u;
-    if ((req.params && req.params.email && email === req.params.email)||(req.params && req.params.email && email_s === req.params.email)||(req.params && req.params.email && email_u === req.params.email)) {
-        return next();
-    } else {
-        if (user_permission_level & Master) {
-            return next();
-        } else {
-            return res.status(403).send({"error":"only same user or admin or supervisor"});
-        }
-    }
-
-};
-
 exports.sameUserCantDoThisAction = (req, res, next) => {
     let userId = req.jwt.userId;
 

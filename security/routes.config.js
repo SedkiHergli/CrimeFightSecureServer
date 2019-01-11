@@ -1,5 +1,4 @@
 const IdentityChecker = require('./authentication/identity.checker');
-const SupervisorChecker = require('./authentication/supervisor.checker');
 const Authenticator = require('./authentication/authentication.handler');
 const Validator = require('./authorization/authorization.validation');
 const Authorization = require('../security/authorization/authorization.permission');
@@ -29,19 +28,5 @@ exports.routesConfig = function (app) {
         Validator.validJWTNeeded,
         Authorization.minimumPermissionLevelRequired(Master),
         Authenticator.resetRefreshSecret
-    ]);
-    //User routes
-    app.post('/auths', [
-        SupervisorChecker.hasAuthValidFields,
-        SupervisorChecker.isPasswordAndUserMatch,
-        Authenticator.login
-    ]);
-
-    app.post('/auths/refresh', [
-        Validator.validJWTNeeded,
-        Validator.verifyRefreshBodyField,
-        Validator.validRefreshNeeded,
-        SupervisorChecker.isUserStillExistsWithSamePrivileges,
-        Authenticator.refresh_token
     ]);
 };

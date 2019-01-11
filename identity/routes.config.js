@@ -1,5 +1,4 @@
 const IdentityProvider = require('./controllers/identity.provider');
-const SupervisorProvider = require('./controllers/supervisor.provider');
 const AuthorizationValidation = require('../security/authorization/authorization.validation');
 const AuthorizationPermission = require('../security/authorization/authorization.permission');
 const config = require('../env.config');
@@ -18,6 +17,7 @@ exports.routesConfig = function (app) {
         AuthorizationPermission.minimumPermissionLevelRequired(Master),
         IdentityProvider.list
     ]);
+
     app.get('/users/:userId', [
         AuthorizationValidation.validJWTNeeded,
         AuthorizationPermission.minimumPermissionLevelRequired(Member),
@@ -25,22 +25,20 @@ exports.routesConfig = function (app) {
         IdentityProvider.getById
     ]);
 
-        //Supervisors route
-        app.post('/supers', [
-            SupervisorProvider.insert
-        ]);
-        app.get('/supers', [
-            AuthorizationValidation.validJWTNeeded,
-            AuthorizationPermission.minimumPermissionLevelRequired(Master),
-            SupervisorProvider.list
-        ]);
-        app.get('/supers/:userId', [
-            AuthorizationValidation.validJWTNeeded,
-            AuthorizationPermission.minimumPermissionLevelRequired(Member),
-            AuthorizationPermission.onlySameUserOrAdminCanDoThisAction,
-            SupervisorProvider.getById
-        ]);
+    app.post('/users/:email/crimeReports', [
+        AuthorizationValidation.validJWTNeeded,
+        AuthorizationPermission.minimumPermissionLevelRequired(Member),
+        AuthorizationPermission.onlySameUserOrAdminCanDoThisAction,
+        IdentityProvider.insertc
+    ]);
 
+    app.patch('/users/:email/crimeReports', [
+        AuthorizationValidation.validJWTNeeded,
+        AuthorizationPermission.minimumPermissionLevelRequired(Member),
+        AuthorizationPermission.onlySameUserOrAdminCanDoThisAction,
+        IdentityProvider.patchByEmailc
+    ]);
+      
 
     /**
      * In a PUT request, the enclosed entity is considered to be
@@ -57,14 +55,7 @@ exports.routesConfig = function (app) {
         IdentityProvider.putByEmail
     ]);
 
-    //Supervisor route
-    app.put('/supers/:email', [
-        AuthorizationValidation.validJWTNeeded,
-        AuthorizationPermission.minimumPermissionLevelRequired(Master),
-        AuthorizationPermission.sameUserCantDoThisAction,
-        SupervisorProvider.putByEmail
-    ]);
-
+    
     /**
      * PATCH specifies that the enclosed entity contains a set of instructions describing
      * how a resource currently residing on the origin server should be modified to produce a new version.
@@ -76,9 +67,10 @@ exports.routesConfig = function (app) {
     app.patch('/users/:email', [
         AuthorizationValidation.validJWTNeeded,
         AuthorizationPermission.minimumPermissionLevelRequired(Member),
-        AuthorizationPermission.onlySameUserOrAdminOrSupervisorCanDoThisAction,
+        AuthorizationPermission.onlySameUserOrAdminCanDoThisAction,
         IdentityProvider.patchByEmail
     ]);
+
     app.delete('/users/:email', [
         AuthorizationValidation.validJWTNeeded,
         AuthorizationPermission.minimumPermissionLevelRequired(Master),
@@ -86,17 +78,5 @@ exports.routesConfig = function (app) {
         IdentityProvider.removeByEmail
     ]);
 
-    //Supervisor route
-    app.patch('/supers/:email', [
-        AuthorizationValidation.validJWTNeeded,
-        AuthorizationPermission.minimumPermissionLevelRequired(Member),
-        AuthorizationPermission.onlySameUserOrAdminOrSupervisorCanDoThisAction,
-        SupervisorProvider.patchByEmail
-    ]);
-    app.delete('/supers/:email', [
-        AuthorizationValidation.validJWTNeeded,
-        AuthorizationPermission.minimumPermissionLevelRequired(Member),
-        AuthorizationPermission.onlySameUserOrAdminOrSupervisorCanDoThisAction,
-        SupervisorProvider.removeByEmail
-    ]);
+    
 };

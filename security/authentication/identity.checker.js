@@ -69,5 +69,7 @@ exports.isUserStillExistsWithSamePrivileges = (req, res, next) => {
             }
             req.body.roles = user[0].permissionLevel;
             return next();
-        });
+        }).catch(function (error) {
+            console.error(error)
+          });
 };

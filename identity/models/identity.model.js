@@ -3,18 +3,48 @@ const config = require('../../env.config');
 mongoose.connect(config.server_url,{useCreateIndex: true,useNewUrlParser: true});
 const Schema = mongoose.Schema;
 
+var crimeSchema = new Schema({
+    type:  {
+        type: String,
+        default:""
+    },
+    lat:  {
+        type: String,
+        default:""
+    },
+    lng:  {
+        type: String,
+        default:""
+    },
+    arrest:  {
+        type: Boolean,
+        default:""
+    },
+    description:  {
+        type: String,
+        default:""
+    },
+    locationDescription:  {
+        type: String,
+        default:""
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users'
+    }
+}, {
+    timestamps: true
+});
+
+
 const identiySchema = new Schema({
     fullName: {type:String,required:true},
     email: {type:String,required:true,unique:true},
     password: {type:String,required:true},
     phone:{type:String,required:true},
     sexe:{type:String,required:true},
-    stype:{type:String,required:true},
-    lat:{type:String,required:true},
-    lng:{type:String,required:true},
-    name_s:{type:String,required:true},
-    email_s:{type:String,required:true},
-    phone_s:{type:String,required:true},
+    stype:{type:String,default:"User"},
+    crimeReports:[crimeSchema],
     permissionLevel: {type:Number,required:true}
     },
     {timestamps: true
@@ -39,6 +69,7 @@ const Identity = mongoose.model('Users', identiySchema);
 exports.findByEmail = (email) => {
     return Identity.find({email: email});
 };
+
 exports.findById = (id) => {
     return Identity.findById(id)
         .then((result) => {
@@ -51,6 +82,12 @@ exports.findById = (id) => {
 
 exports.createIdentity = (userData) => {
     const user = new Identity(userData);
+    return user.save();
+};
+
+exports.createIdentityc = (userData,user) => {
+    userData["author"]=user._id;
+    user.crimeReports=[userData];
     return user.save();
 };
 
@@ -69,9 +106,9 @@ exports.list = (perPage, page) => {
     });
 };
 
-exports.putIdentity = (id,identityData) => {
+exports.putIdentity = (email,identityData) => {
     return new Promise((resolve, reject) => {
-        Identity.findByIdAndUpdate(id,identityData,function (err,user) {
+        Identity.findOneAndUpdate({email: email},{ $set:userData}, function (err, user) {
             if (err) reject(err);
             resolve(user);
         });
@@ -86,6 +123,18 @@ exports.patchIdentity = (email, userData) => {
             
         });
     });
+};
+
+exports.patchIdentityc = (user, userData) => {
+    if(!userData.validation){
+        userData.data["author"]=user._id;
+        user.crimeReports.push(userData.data);}
+    else{
+        var d = {type:"",lat:"",lng:"",arrest:"",description:"",locationDescription:""};
+        d["author"]=user._id;
+        user.crimeReports=d;
+}
+    return user.save();
 };
 
 exports.removeById = (email) => {
