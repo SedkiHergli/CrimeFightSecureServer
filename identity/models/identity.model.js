@@ -4,6 +4,10 @@ mongoose.connect(config.server_url,{useCreateIndex: true,useNewUrlParser: true})
 const Schema = mongoose.Schema;
 
 var crimeSchema = new Schema({
+    date:  {
+        type: String,
+        default:""
+    },
     type:  {
         type: String,
         default:""
@@ -18,7 +22,7 @@ var crimeSchema = new Schema({
     },
     arrest:  {
         type: Boolean,
-        default:""
+        default:false
     },
     description:  {
         type: String,
@@ -86,8 +90,9 @@ exports.createIdentity = (userData) => {
 };
 
 exports.createIdentityc = (userData,user) => {
-    userData["author"]=user._id;
-    user.crimeReports=[userData];
+    var d = {date:"",type:"",lat:"",lng:"",arrest:"",description:"",locationDescription:""};
+    d["author"]=user._id;
+    user.crimeReports=[d];
     return user.save();
 };
 
@@ -127,14 +132,16 @@ exports.patchIdentity = (email, userData) => {
 
 exports.patchIdentityc = (user, userData) => {
     if(!userData.validation){
-        userData.data["author"]=user._id;
-        user.crimeReports.push(userData.data);}
+        userData.data["author"]=user[0]._id;
+        var d = [];
+        user[0]["crimeReports"].push(userData.data);
+    }
     else{
-        var d = {type:"",lat:"",lng:"",arrest:"",description:"",locationDescription:""};
+        var d = {date:"",type:"",lat:"",lng:"",arrest:false,description:"",locationDescription:""};
         d["author"]=user._id;
-        user.crimeReports=d;
+        user[0]["crimeReports"]=[d];
 }
-    return user.save();
+    return user[0].save();
 };
 
 exports.removeById = (email) => {

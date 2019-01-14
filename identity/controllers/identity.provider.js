@@ -46,7 +46,7 @@ exports.list = (req, res) => {
 };
 
 exports.getById = (req, res) => {
-    IdentityModel.findById(req.params.userId)
+    IdentityModel.findByEmail(req.params.userId)
         .then((result) => {
             res.status(200).send(result);
         }).catch(function (error) {
