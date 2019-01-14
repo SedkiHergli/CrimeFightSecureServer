@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const config = require('../../env.config');
-mongoose.connect(config.server_url,{useCreateIndex: true,useNewUrlParser: true});
+mongoose.connect(config.server_url,{useCreateIndex: true,useNewUrlParser: true,useFindAndModify:false});
 const Schema = mongoose.Schema;
 
 var crimeSchema = new Schema({
@@ -75,13 +75,7 @@ exports.findByEmail = (email) => {
 };
 
 exports.findById = (id) => {
-    return Identity.findById(id)
-        .then((result) => {
-            result = result.toJSON();
-            delete result._id;
-            delete result.__v;
-            return result;
-        });
+    return Identity.findById(id);
 };
 
 exports.createIdentity = (userData) => {
@@ -144,6 +138,7 @@ exports.patchIdentityc = (user, userData) => {
     return user[0].save();
 };
 
+
 exports.removeById = (email) => {
     return new Promise((resolve, reject) => {
         Identity.deleteOne({email: email}, (err) => {
@@ -156,3 +151,10 @@ exports.removeById = (email) => {
 });
 };
 
+exports.removeByIid = (user, id) => {
+    var i = user.crimeReports.find(function(element) {
+        return element._id == id;
+      });
+    var a = user.crimeReports.splice(user.crimeReports.indexOf(i),1);
+    return user.save();
+};

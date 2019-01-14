@@ -1,4 +1,4 @@
-const IdentityProvider = require('./controllers/identity.provider');
+const CrimesProvider = require('./controllers/crimes.provider');
 const AuthorizationValidation = require('../security/authorization/authorization.validation');
 const AuthorizationPermission = require('../security/authorization/authorization.permission');
 const config = require('../env.config');
@@ -9,34 +9,24 @@ const Surfer = config.permissionLevels.Surfer;
 
 exports.routesConfig = function (app) {
     //Users route
-    app.post('/users', [
-        IdentityProvider.insert
-    ]);
-    app.get('/users', [
+    app.post('/crime', [
         AuthorizationValidation.validJWTNeeded,
         AuthorizationPermission.minimumPermissionLevelRequired(Master),
-        IdentityProvider.list
+        AuthorizationPermission.sameUserCantDoThisAction,
+        CrimesProvider.insert
     ]);
 
-    app.get('/users/:userId', [
+    app.get('/crimes', [
+        AuthorizationValidation.validJWTNeeded,
+        AuthorizationPermission.minimumPermissionLevelRequired(Master),
+        CrimesProvider.list
+    ]);
+
+    app.get('/crimes/:crimeId', [
         AuthorizationValidation.validJWTNeeded,
         AuthorizationPermission.minimumPermissionLevelRequired(Member),
         AuthorizationPermission.onlySameUserOrAdminCanDoThisAction,
-        IdentityProvider.getById
-    ]);
-
-    app.post('/users/:email/crimeReports', [
-        AuthorizationValidation.validJWTNeeded,
-        AuthorizationPermission.minimumPermissionLevelRequired(Member),
-        AuthorizationPermission.onlySameUserOrAdminCanDoThisAction,
-        IdentityProvider.insertc
-    ]);
-
-    app.patch('/users/:email/crimeReports', [
-        AuthorizationValidation.validJWTNeeded,
-        AuthorizationPermission.minimumPermissionLevelRequired(Member),
-        AuthorizationPermission.onlySameUserOrAdminCanDoThisAction,
-        IdentityProvider.patchByEmailc
+        CrimesProvider.getById
     ]);
       
     /**
@@ -47,11 +37,11 @@ exports.routesConfig = function (app) {
      * Thus this is a privileged action done only by administrator
      */
     //User route
-    app.put('/users/:email', [
+    app.put('/crimes/:crimeId', [
         AuthorizationValidation.validJWTNeeded,
         AuthorizationPermission.minimumPermissionLevelRequired(Master),
         AuthorizationPermission.sameUserCantDoThisAction,
-        IdentityProvider.putByEmail
+        CrimesProvider.putById
     ]);
 
     
@@ -63,25 +53,18 @@ exports.routesConfig = function (app) {
      * Thus only same user or admin can patch without changing identity permission level.
      */
     //User route
-    app.patch('/users/:email', [
+    app.patch('/crimes/:crimeId', [
         AuthorizationValidation.validJWTNeeded,
         AuthorizationPermission.minimumPermissionLevelRequired(Member),
         AuthorizationPermission.onlySameUserOrAdminCanDoThisAction,
-        IdentityProvider.patchByEmail
+        CrimesProvider.patchById
     ]);
 
-    app.delete('/users/:email', [
+    app.delete('/crimes/:crimeId', [
         AuthorizationValidation.validJWTNeeded,
         AuthorizationPermission.minimumPermissionLevelRequired(Master),
         AuthorizationPermission.sameUserCantDoThisAction,
-        IdentityProvider.removeByEmail
-    ]);
-
-    app.delete('/users/:userId/crimeReports/:crimeId', [
-        AuthorizationValidation.validJWTNeeded,
-        AuthorizationPermission.minimumPermissionLevelRequired(Master),
-        AuthorizationPermission.sameUserCantDoThisAction,
-        IdentityProvider.removeById
+        CrimesProvider.removeById
     ]);
 
     

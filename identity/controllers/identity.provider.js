@@ -102,3 +102,15 @@ exports.removeByEmail = (req, res) => {
           });
    
 };
+
+exports.removeById = (req, res) => {
+    IdentityModel.findById(req.params.userId).then(user=>{
+    IdentityModel.removeByIid(user, req.params.crimeId)
+    .then((result)=>{
+    res.status(204).send({});
+}).catch(function (error) {
+    console.error(error)
+  });
+});
+
+};
