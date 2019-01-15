@@ -1,0 +1,3 @@
+"_id","caseNumber","arrest","date","description","locationDescription","type","lat","lng","createdAt","updatedAt"
+"5c3bae34758a862264b3f6ee","123456",true,"2019-01-01T00:00:00Z","hqgvjksl","xwhkb;dnl","ARSON","36.88805626537576","10.175323625706937","2019-01-13T21:31:32.520Z","2019-01-13T21:31:32.520Z"
+"5c3ca808f2c8731f04529b00","1234567",true,"2019-01-01T00:00:00Z","gfhjk","fghj","THEFT","36.88806437024351","10.175283563754306","2019-01-14T15:17:28.651Z","2019-01-14T15:17:28.651Z"

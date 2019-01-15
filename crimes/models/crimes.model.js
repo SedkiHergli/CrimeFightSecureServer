@@ -85,6 +85,19 @@ exports.list = (perPage, page) => {
     });
 };
 
+exports.listcsv = () => {
+    return new Promise((resolve, reject) => {
+        Crimes.find()
+            .exec(function (err, users) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(users);
+                }
+            })
+    });
+};
+
 exports.putCrimes = (id,CrimesData) => {
     return new Promise((resolve, reject) => {
         Crimes.findByIdAndUpdate(id,{ $set:CrimesData}, function (err, user) {

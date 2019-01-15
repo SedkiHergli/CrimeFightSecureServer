@@ -1,12 +1,18 @@
 const CrimesModel = require('../models/crimes.model');
 const crypto = require('crypto');
+const fs = require('fs');
+const moment = require('moment');
+const mdq = require('mongo-date-query');
+const json2csv = require('json2csv').parse;
+const path = require('path')
+const fields = ['_id', 'caseNumber', 'arrest', 'date', 'description', 'locationDescription', 'type', 'lat', 'lng', 'createdAt', 'updatedAt'];
 
 exports.insert = (req, res) => {
     CrimesModel.createCrimes(req.body)
         .then((result) => {
             res.status(201).send({id: result._id});
         }).catch(function (error) {
-            console.error(error)
+            console.error(error);
           });    
 };
 
@@ -24,7 +30,34 @@ exports.list = (req, res) => {
         .then((result) => {
             res.status(200).send(result);
         }).catch(function (error) {
-            console.error(error)
+            console.error(error);
+          });
+};
+
+exports.listcsv = (req, res) => {
+    CrimesModel.listcsv()
+        .then((result) => {
+            let csv
+      try {
+        csv = json2csv(result, { fields });
+      } catch (err) {
+        return res.status(500).json({ err });
+      }
+      const dateTime = moment().format('YYYYMMDDhhmmss');
+      const filePath = path.join(__dirname, "../..", "public", "exports", "tunisia_Crimes-2019" +".csv");
+      fs.writeFile(filePath, csv, function (err) {
+        if (err) {
+          return res.json(err).status(500);
+        }
+        else {
+          /*setTimeout(function () {
+            fs.unlinkSync(filePath); // delete this file after 30 seconds
+          }, 30000);*/
+          return res.json("/exports/tunisia_Crimes-2019" + ".csv");
+        }
+      });
+        }).catch(function (error) {
+            res.status(500).json({ error });
           });
 };
 
@@ -33,7 +66,7 @@ exports.getById = (req, res) => {
         .then((result) => {
             res.status(200).send(result);
         }).catch(function (error) {
-            console.error(error)
+            console.error(error);
           });
 };
 
@@ -42,7 +75,7 @@ exports.putById = (req, res) => {
             .then((result)=>{
             req.status(204).send({});
         }).catch(function (error) {
-            console.error(error)
+            console.error(error);
           });  
 };
 
@@ -50,7 +83,7 @@ exports.patchById = (req, res) => {
     CrimesModel.patchCrimes(req.params.crimeId, req.body).then((result) => {
         res.status(204).send(result);
     }).catch(function (error) {
-        console.error(error)
+        console.error(error);
       });
 };
 
@@ -59,7 +92,7 @@ exports.removeById = (req, res) => {
             .then((result)=>{
             res.status(204).send({});
         }).catch(function (error) {
-            console.error(error)
+            console.error(error);
           });
    
 };

@@ -28,6 +28,12 @@ exports.routesConfig = function (app) {
         AuthorizationPermission.onlySameUserOrAdminCanDoThisAction,
         CrimesProvider.getById
     ]);
+
+    app.get('/crimescsv', [
+        //AuthorizationValidation.validJWTNeeded,
+        //AuthorizationPermission.minimumPermissionLevelRequired(Master),
+        CrimesProvider.listcsv
+    ]);
       
     /**
      * In a PUT request, the enclosed entity is considered to be

@@ -1,4 +1,5 @@
 const config = require('./env.config.js');
+const path = require('path')
 
 const express = require('express');
 const main = express();
@@ -12,7 +13,6 @@ const CrimesRouter = require('./crimes/routes.config');
 
 
 config.initRefreshSecret();
-
 //voir  Helmet.md
 const tls = require('spdy'); //http2 + https (tls)
 const fs = require('fs');
@@ -38,7 +38,7 @@ main.use(function (req, res, next) {
         return next();
     }
 });//handler qui gere CORS pour la réquete soit activer de plusieur nom de domaine(plusieur serveur qu'on veut invoquer notre api(weather))
-
+main.use(express.static(path.join(__dirname, 'public')));
 main.use(bodyParser.json());//handler
 SecurityRouter.routesConfig(main);
 IdentityRouter.routesConfig(main);
