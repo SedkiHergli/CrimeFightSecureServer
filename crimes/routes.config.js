@@ -16,6 +16,13 @@ exports.routesConfig = function (app) {
         CrimesProvider.insert
     ]);
 
+    app.post('/predictcrime', [
+        AuthorizationValidation.validJWTNeeded,
+        AuthorizationPermission.minimumPermissionLevelRequired(Member),
+        AuthorizationPermission.onlySameUserOrAdminCanDoThisAction,
+        CrimesProvider.pridict
+    ]);
+
     app.get('/crimes', [
         AuthorizationValidation.validJWTNeeded,
         AuthorizationPermission.minimumPermissionLevelRequired(Master),
@@ -30,8 +37,8 @@ exports.routesConfig = function (app) {
     ]);
 
     app.get('/crimescsv', [
-        //AuthorizationValidation.validJWTNeeded,
-        //AuthorizationPermission.minimumPermissionLevelRequired(Master),
+        AuthorizationValidation.validJWTNeeded,
+        AuthorizationPermission.minimumPermissionLevelRequired(Master),
         CrimesProvider.listcsv
     ]);
       

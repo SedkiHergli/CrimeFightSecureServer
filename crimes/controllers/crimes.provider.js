@@ -6,6 +6,12 @@ const mdq = require('mongo-date-query');
 const json2csv = require('json2csv').parse;
 const path = require('path')
 const fields = ['_id', 'caseNumber', 'arrest', 'date', 'description', 'locationDescription', 'type', 'lat', 'lng', 'createdAt', 'updatedAt'];
+// We need this to build our post string
+var querystring = require('querystring');
+var http = require('http');
+//var fs = require('fs');
+var request = require('request');
+
 
 exports.insert = (req, res) => {
     CrimesModel.createCrimes(req.body)
@@ -83,7 +89,7 @@ exports.patchById = (req, res) => {
     CrimesModel.patchCrimes(req.params.crimeId, req.body).then((result) => {
         res.status(204).send(result);
     }).catch(function (error) {
-        console.error(error);
+        res.status(404).send(error);
       });
 };
 
@@ -95,4 +101,21 @@ exports.removeById = (req, res) => {
             console.error(error);
           });
    
+};
+
+
+exports.pridict = (req, res) => {
+    request.post(
+        'http://localhost:5000/input',
+        { json: req.body },
+        function (error, response, resp) {
+            if (!error && response.statusCode == 200) {
+                if(resp["result"]=="invalid"){
+                    res.send({"error":"No pridiction"});}
+                else{
+                    res.send(resp); 
+                }       
+            }
+        }
+    );
 };
